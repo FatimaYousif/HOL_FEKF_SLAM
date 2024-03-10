@@ -88,16 +88,16 @@ class EKF_3DOFDifferentialDriveInputDisplacement(GFLocalization, DR_3DOFDifferen
         d_R  = uk_pulse[1, 0] * (2*np.pi*self.wheelRadius/self.robot.pulse_x_wheelTurns)
 
         d  = (d_L + d_R) / 2.
-        delta_theta_k   = np.arctan2(d_R - d_L,self.wheelBase)
+        delta_theta_k   = (d_R - d_L)/self.wheelBase
 
         uk = np.array([[d],
                                     [0],
                                     [delta_theta_k]])
         
         # from magic table
-        A = np.array([[(np.pi*self.robot.wheelRadius)/(self.robot.pulse_x_wheelTurns*self.dt),  np.pi * self.robot.wheelRadius / (self.robot.pulse_x_wheelTurns*self.dt)],
+        A = np.array([[(np.pi*self.robot.wheelRadius)/(self.robot.pulse_x_wheelTurns),  np.pi * self.robot.wheelRadius / (self.robot.pulse_x_wheelTurns)],
                       [0 , 0],
-                      [-(2*np.pi*self.robot.wheelRadius)/(self.robot.pulse_x_wheelTurns*self.robot.wheelBase*self.dt), (2*np.pi*self.robot.wheelRadius)/(self.robot.pulse_x_wheelTurns*self.robot.wheelBase*self.dt)]])
+                      [-(2*np.pi*self.robot.wheelRadius)/(self.robot.pulse_x_wheelTurns*self.robot.wheelBase), (2*np.pi*self.robot.wheelRadius)/(self.robot.pulse_x_wheelTurns*self.robot.wheelBase)]])
   
         Qk = np.matmul(np.matmul(A, Qk_pulse), A.T).reshape(3,3)
       
